@@ -14,8 +14,8 @@ payments_aggregated as (
     
     select 
         order_id,
+
         sum(amount) as amount
-    
     from successful_payments
     group by 1
 ),
