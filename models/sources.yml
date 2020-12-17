@@ -1,0 +1,28 @@
+version: 2
+
+sources:
+    - name: jaffle_shop
+      description: This is a replica of the Postgreas database used by our app
+      database: raw
+      tables:
+        - name: orders
+          description: One record per order. Includes cancelled and deleted orders.
+          columns:
+            - name: id
+              description: Primary key of the orders table
+              tests:
+                - unique
+                - not_null
+        - name: customers
+    
+    - name: stripe
+      description: Source data for payments via Stripe API
+      database: raw
+      tables:
+        - name: payment
+          description: One record per payment attempt. Includes failed payments. Can have multiple payments per order.
+          loaded_at_field: _batched_at
+
+          freshness:
+            warn_after: {count: 12, period: hour}
+            error_after: {count: 24, period: hour}

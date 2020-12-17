@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: customers
-    description: "{{ doc('customers') }}"
+    description: "{{ doc('dim_customers') }}"
     columns:
       - name: customer_id
         description: Primary key
@@ -33,3 +33,39 @@ models:
         tests:
           - accepted_values:
               values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
+
+  - name: stg_payments
+    description: This model cleans up payment data
+    columns:
+    - name: payment_id
+      description: Primary key
+      tests:
+        - unique
+        - not_null
+    - name: order_id
+      description: Foreign key to orders
+      tests:
+        - relationships:
+            to: ref('stg_orders')
+            field: order_id
+    - name: status
+      tests:
+        - accepted_values:
+            values: ['success', 'fail']
+
+  - name: orders
+    description: One line per order
+    columns:
+    - name: order_id
+      description: Primary key
+      tests:
+        - unique
+        - not_null
+    - name: customer_id
+      description: Foreign Key to customers
+      test:
+        - relationships:
+            to: ref('customers')
+            field: customer_id
+    - name: amount
+      description: Order amount in USD
